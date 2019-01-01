@@ -1,31 +1,33 @@
 import sys
 import os
+import datetime
 
 def main():
     arguments = sys.argv[1:]
-    if len(arguments) != 2:
-        print str(len(arguments)) + " argument(s) passed. Expecting 2."
+    if len(arguments) != 1:
+        print str(len(arguments)) + " argument(s) passed. Expecting 1."
     else:
-        createFiles(arguments)
+        createFiles(arguments[0])
 
-def createFiles(arguments):
-    fileName = "week" + arguments[0] + "_" + arguments[1]
+def createFiles(name):
+    week = findWeek()
+    fileName = "week" + week + "_" + name
     if os.path.isfile(fileName + ".html"):
         print "Scaffolding already exists."
     elif os.path.isfile(fileName + ".js"):
         print "Scaffolding already exists."
     else:
-        createHTML(arguments)
+        createHTML(week, name)
         createJS(fileName)
 
-def createHTML(arguments):
-    fileName = "week" + arguments[0] + "_" + arguments[1]
+def createHTML(week, name):
+    fileName = "week" + week + "_" + name
     refFile = open("ref.html", 'r')
     newFile = open(fileName+".html", 'w')
 
     refHTML = refFile.read()
-    title = "AA Week " + arguments[0] + " " + antiCamel(arguments[1])
-    jsFile = "week" + arguments[0] + "_" + arguments[1] + ".js"
+    title = "AA Week " + week + " " + antiCamel(name)
+    jsFile = "week" + week + "_" + name + ".js"
 
     newFile.write(refHTML.replace("Insert_Title", title).replace("Insert_JS", jsFile))
     refFile.close()
@@ -50,6 +52,13 @@ def antiCamel(title):
     wordList.append((title[oldIndex:(i+1)]).capitalize())
     newTitle = " ".join(wordList)
     return newTitle
+
+def findWeek():
+    zeroIDate = datetime.date.today().strftime("%W")
+    unitIDate = str(int(zeroIDate) + 1)
+    if len(unitIDate) == 1:
+        unitIDate = "0" + unitIDate
+    return unitIDate
 
 if __name__ == "__main__":
     main()
